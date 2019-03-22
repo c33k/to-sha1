@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/c33k/to-sha1.svg?branch=master)](https://travis-ci.org/c33k/to-sha1)
+
 # to-sha1
 Convert string or file contents to SHA1.
 
