@@ -2,13 +2,14 @@ const crypto = require('crypto');
 const concat = require('concat-stream');
 const fs = require('fs');
 const path = require('path');
+const through = require('through2');
 
 module.exports = { sha1, toSHA1 };
 
-function toSHA1(res) {
-  return concat(function(body) {
-    if (typeof res === 'undefined') process.stdout.write(sha1(body));
-    else res.end(sha1(body));
+function toSHA1(filename, cb) {
+  checkFileValidity(filename, (err, file) => {
+    if (err) cb(err);
+    fs.createReadStream(file).pipe(createWriteStream(cb));
   });
 }
 
@@ -19,9 +20,39 @@ function sha1(str) {
     .digest('hex');
 }
 
+function createWriteStream(cb) {
+  return concat(body => cb(null, sha1(body)));
+}
+
+function checkFileValidity(filepath, cb) {
+  if (typeof filepath === 'undefined')
+    cb(new Error(`filepath can't be undefined`));
+
+  let file = path.resolve(filepath);
+
+  fs.lstat(file, (err, stat) => {
+    if (err) cb(new Error(`Invalid file: ${file}`));
+
+    if (!stat.isFile()) cb(new Error(`${file} must be a file!`));
+
+    fs.access(file, fs.F_OK, err => {
+      if (err) cb(err);
+      cb(null, file);
+    });
+  });
+}
+
 //if called from command line...
 if (require.main === module) {
-  if (process.argv.length <= 2) return process.stdin.pipe(toSHA1());
+  if (process.argv.length <= 2) {
+    return process.stdin
+      .pipe(
+        through((chunk, enc, next) => {
+          next(null, sha1(chunk.toString()));
+        })
+      )
+      .pipe(process.stdout);
+  }
 
   const COMMAND = 2;
   const FILEPATH = 3;
@@ -42,31 +73,12 @@ if (require.main === module) {
 }
 
 function processFile(filepath) {
-  if (typeof filepath === 'undefined') {
-    console.log('-f requires a file path');
-    process.exit(2);
-  }
-
-  let file = path.resolve(filepath);
-
-  fs.lstat(file, function(err, stat) {
+  toSHA1(filepath, (err, messageDigest) => {
     if (err) {
-      console.log(`${file} is invalid!`);
-      process.exit(3);
+      console.log(`Unable to process file: ${err}`);
+      process.exit(2);
     }
 
-    if (!stat.isFile()) {
-      console.log(`${file} must be a file!`);
-      process.exit(4);
-    }
-
-    fs.access(file, fs.F_OK, function(err) {
-      if (err) {
-        console.log(err);
-        process.exit(err.code);
-      }
-
-      fs.createReadStream(file).pipe(toSHA1());
-    });
+    console.log(messageDigest);
   });
 }
