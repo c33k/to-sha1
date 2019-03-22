@@ -2,7 +2,6 @@ const crypto = require('crypto');
 const concat = require('concat-stream');
 const fs = require('fs');
 const path = require('path');
-const through = require('through2');
 
 module.exports = { sha1, toSHA1 };
 
@@ -39,46 +38,5 @@ function checkFileValidity(filepath, cb) {
       if (err) cb(err);
       cb(null, file);
     });
-  });
-}
-
-//if called from command line...
-if (require.main === module) {
-  if (process.argv.length <= 2) {
-    return process.stdin
-      .pipe(
-        through((chunk, enc, next) => {
-          next(null, sha1(chunk.toString()));
-        })
-      )
-      .pipe(process.stdout);
-  }
-
-  const COMMAND = 2;
-  const FILEPATH = 3;
-
-  switch (process.argv[COMMAND]) {
-    case '-h':
-    case '--help':
-      console.log('usage: [-f|--file] <filepath>');
-      break;
-    case '-f':
-    case '--file':
-      processFile(process.argv[FILEPATH]);
-      break;
-    default:
-      console.log('invalid argument');
-      process.exit(1);
-  }
-}
-
-function processFile(filepath) {
-  toSHA1(filepath, (err, messageDigest) => {
-    if (err) {
-      console.log(`Unable to process file: ${err}`);
-      process.exit(2);
-    }
-
-    console.log(messageDigest);
   });
 }

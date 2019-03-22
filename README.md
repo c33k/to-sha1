@@ -1,19 +1,34 @@
 # to-sha1
 Convert string or file contents to SHA1.
 
-## installation
-
-```
-npm i to-sha1
-```
-
-Or, if you use yarn:
-
-```
-yarn add to-sha1
-```
-
 ## usage
+
+### As Command Line
+First, install ***to-sha1*** globally:
+
+```sh
+npm i -g to-sha1
+```
+
+You can then use it with pipes:
+
+```sh
+echo -n "some string I want to hash" | to-sha1
+```
+
+Or passing arguments.
+
+#### [-f | --filename]
+Receives the *filepath* as argument and return SHA-1 of it's content:
+
+```sh
+$ to-sha1 -f <filepath>
+```
+
+#### [-h | --help]
+Displays accepted arguments.
+
+### As Regular Node Module
 
 ```javascript
   const { toSHA1, sha1 } = require('to-sha1')
