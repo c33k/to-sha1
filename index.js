@@ -7,7 +7,7 @@ module.exports = { sha1, toSHA1 };
 
 function toSHA1(filename, cb) {
   checkFileValidity(filename, (err, file) => {
-    if (err) cb(err);
+    if (err) return cb(err);
     fs.createReadStream(file).pipe(createWriteStream(cb));
   });
 }
@@ -30,12 +30,11 @@ function checkFileValidity(filepath, cb) {
   let file = path.resolve(filepath);
 
   fs.lstat(file, (err, stat) => {
-    if (err) cb(new Error(`Invalid file: ${file}`));
-
-    if (!stat.isFile()) cb(new Error(`${file} must be a file!`));
+    if (err) return cb(new Error(`Invalid file: ${file}`));
+    if (!stat.isFile()) return cb(new Error(`${file} must be a file!`));
 
     fs.access(file, fs.F_OK, err => {
-      if (err) cb(err);
+      if (err) return cb(err);
       cb(null, file);
     });
   });
