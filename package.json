@@ -1,6 +1,6 @@
 {
   "name": "to-sha1",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Receives input (stream or filename) and outputs SHA1 of the content.",
   "main": "index.js",
   "bin": "./bin/to-sha1.js",
