@@ -1,6 +1,6 @@
 {
   "name": "to-sha1",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Receives input (stream or filename) and outputs SHA1 of the content.",
   "main": "index.js",
   "scripts": {
@@ -14,5 +14,10 @@
   "dependencies": {
     "concat-stream": "^2.0.0",
     "through2": "^3.0.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:c33k/to-sha1.git"
+  },
+  "keywords": ["SHA-1", "crypto", "hash"]
 }
