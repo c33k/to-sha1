@@ -21,6 +21,13 @@ echo -n "some string I want to hash" | to-sha1
 
 Or passing arguments.
 
+#### [-s | --string]
+Receives *string* as argument and return SHA-1:
+
+```sh
+$ to-sha1 -s "Random text..."
+```
+
 #### [-f | --filename]
 Receives the *filepath* as argument and return SHA-1 of it's content:
 
