@@ -4,7 +4,7 @@ const { toSHA1, sha1 } = require('../index');
 const through = require('through2');
 
 const COMMAND = 2;
-const FILEPATH = 3;
+const ARGUMENT = 3;
 
 if (process.argv.length <= 2) {
   return process.stdin
@@ -23,7 +23,11 @@ switch (process.argv[COMMAND]) {
     break;
   case '-f':
   case '--file':
-    processFile(process.argv[FILEPATH]);
+    processFile(process.argv[ARGUMENT]);
+    break;
+  case '-s':
+  case '--string':
+    processString(process.argv[ARGUMENT]);
     break;
   default:
     console.log('invalid argument');
@@ -39,4 +43,13 @@ function processFile(filepath) {
 
     console.log(messageDigest);
   });
+}
+
+function processString(string) {
+  if (typeof string == 'undefined' || string.length === 0) {
+    console.log('[-s|--string] option requires string argument');
+    process.exit(3);
+  }
+
+  console.log(sha1(string));
 }
